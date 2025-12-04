@@ -1,0 +1,41 @@
+{
+   "bgColorHint": {
+      "message": "HEX color code (e.g., #ffffff for white)"
+   },
+   "bgColorLabel": {
+      "message": "Background Color (for transparent images)"
+   },
+   "extDesc": {
+      "message": "Right-click any image to convert and download as JPEG. All processing happens locally on your device."
+   },
+   "extName": {
+      "message": "Save as JPG"
+   },
+   "footerText": {
+      "message": "All conversions happen locally on your device. No data is uploaded."
+   },
+   "menuTitle": {
+      "message": "Save as JPG"
+   },
+   "optionsTitle": {
+      "message": "Save as JPG - Options"
+   },
+   "qualityHint": {
+      "message": "Range: 0.70 - 1.0 (Higher = Better quality, Larger file size)"
+   },
+   "qualityLabel": {
+      "message": "JPEG Quality"
+   },
+   "resetButton": {
+      "message": "Restore Defaults"
+   },
+   "saveAsHint": {
+      "message": "If unchecked, files download directly to your default folder"
+   },
+   "saveAsLabel": {
+      "message": "Show \"Save As\" dialog before downloading"
+   },
+   "saveButton": {
+      "message": "Save Settings"
+   }
+}
