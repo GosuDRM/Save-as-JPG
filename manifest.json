@@ -19,6 +19,6 @@
    "manifest_version": 3,
    "name": "__MSG_extName__",
    "options_page": "options.html",
-   "permissions": [ "contextMenus", "downloads", "storage", "offscreen", "activeTab", "scripting" ],
-   "version": "2.0.0"
+   "permissions": [ "contextMenus", "downloads", "storage", "offscreen", "activeTab" ],
+   "version": "2.0.1"
 }
