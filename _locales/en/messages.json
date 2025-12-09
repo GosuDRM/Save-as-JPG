@@ -6,10 +6,13 @@
       "message": "Background Color (for transparent images)"
    },
    "extDesc": {
-      "message": "Right-click any image to convert and download as JPEG. All processing happens locally on your device."
+      "message": "One-click image-to-JPG conversion from any webpage. Your data never leaves your browser."
    },
    "extName": {
       "message": "Save as JPG"
+   },
+   "footerPrivacy": {
+      "message": "All image conversion happens 100% locally on your device — nothing is uploaded."
    },
    "footerText": {
       "message": "All conversions happen locally on your device. No data is uploaded."
@@ -17,14 +20,23 @@
    "menuTitle": {
       "message": "Save as JPG"
    },
+   "optionsSubtitle": {
+      "message": "Maximum quality by default • All processing happens locally • No data leaves your device"
+   },
    "optionsTitle": {
       "message": "Save as JPG - Options"
    },
    "qualityHint": {
       "message": "Range: 0.70 - 1.0 (Higher = Better quality, Larger file size)"
    },
+   "qualityHintMain": {
+      "message": "70% – 100% (higher = better quality, larger file)"
+   },
    "qualityLabel": {
       "message": "JPEG Quality"
+   },
+   "qualityRecommendation": {
+      "message": "Recommended: 100% (visually lossless)"
    },
    "resetButton": {
       "message": "Restore Defaults"

@@ -20,15 +20,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 /**
  * Handles the JPEG conversion request using DOM canvas.
+ * Includes proper cleanup to prevent memory leaks with large images.
  * @param {Object} message - Message containing dataUrl, settings, and needsBackground
  * @param {Function} sendResponse - Callback to send response back to service worker
  */
 async function handleConvertToJPEG(message, sendResponse) {
+  let img = null;
+
   try {
     const { dataUrl, settings, needsBackground } = message;
 
     const isSVG = dataUrl.toLowerCase().includes('svg+xml');
-    const img = await loadImage(dataUrl);
+    img = await loadImage(dataUrl);
 
     let width = img.naturalWidth || img.width || 0;
     let height = img.naturalHeight || img.height || 0;
@@ -55,6 +58,10 @@ async function handleConvertToJPEG(message, sendResponse) {
     canvas.height = height;
     const ctx = canvas.getContext('2d');
 
+    if (!ctx) {
+      throw new Error('Failed to get canvas 2D context');
+    }
+
     // Apply background color for transparent source images
     if (needsBackground) {
       ctx.fillStyle = settings.bgColor || '#ffffff';
@@ -68,6 +75,13 @@ async function handleConvertToJPEG(message, sendResponse) {
   } catch (error) {
     console.error('[Save as JPG] Canvas conversion failed:', error);
     sendResponse({ error: error.message });
+  } finally {
+    // Clean up image element to help garbage collector release memory
+    if (img) {
+      img.onload = null;
+      img.onerror = null;
+      img.src = '';
+    }
   }
 }
 

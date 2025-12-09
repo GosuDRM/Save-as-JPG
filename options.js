@@ -178,12 +178,13 @@ async function resetToDefaults() {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Validates a string as a valid 6-digit hex color code.
+ * Validates a string as a valid hex color code.
+ * Supports both 3-digit (#RGB) and 6-digit (#RRGGBB) formats.
  * @param {string} color - Color string to validate
- * @returns {boolean} True if valid hex color (#RRGGBB format)
+ * @returns {boolean} True if valid hex color
  */
 function isValidHexColor(color) {
-  return /^#[0-9A-Fa-f]{6}$/.test(color);
+  return /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(color);
 }
 
 /** @type {number|null} Timeout ID for status auto-hide */

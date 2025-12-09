@@ -10,12 +10,21 @@
 /** @const {string} Unique identifier for the context menu item */
 const MENU_ID = 'save-image-as-jpg';
 
+/** @const {number} Fetch timeout in milliseconds */
+const FETCH_TIMEOUT_MS = 30000;
+
+/** @const {number} Delay before revoking object URLs (ms) */
+const OBJECT_URL_REVOKE_DELAY_MS = 60000;
+
 /** @const {Object} Default extension settings */
 const DEFAULT_SETTINGS = {
   quality: 1.0,
   bgColor: '#ffffff',
   saveAs: false
 };
+
+/** @type {Promise|null} Mutex for offscreen document creation */
+let offscreenDocumentCreating = null;
 
 /**
  * Creates the context menu item when the extension is installed or updated.
@@ -63,8 +72,25 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     await convertAndDownload(imageUrl, settings);
   } catch (error) {
     console.error('[Save as JPG] Conversion failed:', error);
+    showErrorNotification(error.message);
   }
 });
+
+/**
+ * Displays an error notification to the user.
+ * @param {string} message - Error message to display
+ */
+function showErrorNotification(message) {
+  // Use basic notification API if available
+  if (chrome.notifications) {
+    chrome.notifications.create({
+      type: 'basic',
+      iconUrl: 'icons/48.png',
+      title: 'Save as JPG - Error',
+      message: message || 'Failed to convert image. Please try again.'
+    });
+  }
+}
 
 /**
  * Retrieves user settings from Chrome sync storage.
@@ -92,14 +118,30 @@ async function convertAndDownload(srcUrl, settings) {
 
 /**
  * Fetches an image from URL and returns it as a Blob.
+ * Includes timeout protection for slow/hanging requests.
  * @param {string} url - Image URL to fetch
  * @returns {Promise<Blob>} Image data as Blob
- * @throws {Error} If HTTP request fails
+ * @throws {Error} If HTTP request fails or times out
  */
 async function fetchImage(url) {
-  const response = await fetch(url, { referrerPolicy: 'no-referrer' });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  return await response.blob();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, {
+      referrerPolicy: 'no-referrer',
+      signal: controller.signal
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.blob();
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error('Image fetch timed out');
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 /**
@@ -129,6 +171,7 @@ async function convertToJPEG(blob, settings) {
 /**
  * Converts image using OffscreenCanvas API (preferred method).
  * Handles SVG upscaling for small or zero-dimension vectors.
+ * Uses try/finally to ensure ImageBitmap is always closed (prevents memory leaks).
  * @param {Blob} blob - Source image blob
  * @param {Object} settings - User settings
  * @param {boolean} needsBackground - Whether to add solid background
@@ -139,32 +182,73 @@ async function convertWithOffscreenCanvas(blob, settings, needsBackground, mimeT
   const isSVG = mimeType === 'image/svg+xml';
   const bitmap = await createImageBitmap(blob);
 
-  let width = bitmap.width;
-  let height = bitmap.height;
+  try {
+    let width = bitmap.width;
+    let height = bitmap.height;
 
-  // SVG images often have small or zero intrinsic dimensions; upscale to 2048px
-  if (isSVG && Math.max(width, height) < 1024) {
-    const target = 2048;
-    const aspect = width && height ? width / height : 1;
-    const longer = Math.max(width, height) || 1;
-    const scale = target / longer;
-    width = Math.round(width * scale);
-    height = Math.round(height * scale);
+    // SVG images often have small or zero intrinsic dimensions; upscale to 2048px
+    if (isSVG && Math.max(width, height) < 1024) {
+      const target = 2048;
+      const aspect = width && height ? width / height : 1;
+      const longer = Math.max(width, height) || 1;
+      const scale = target / longer;
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+    }
+
+    const canvas = new OffscreenCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) {
+      throw new Error('Failed to get canvas 2D context');
+    }
+
+    // Apply background color for transparent images (PNG, GIF, WebP, SVG)
+    if (needsBackground) {
+      ctx.fillStyle = settings.bgColor;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    ctx.drawImage(bitmap, 0, 0, width, height);
+
+    return await canvas.convertToBlob({ type: 'image/jpeg', quality: settings.quality });
+  } finally {
+    // Always close bitmap to prevent memory leaks
+    bitmap.close();
+  }
+}
+
+/**
+ * Ensures an offscreen document exists, creating one if needed.
+ * Uses a mutex to prevent race conditions when multiple conversions run simultaneously.
+ * @returns {Promise<boolean>} True if a new document was created, false if one already existed
+ */
+async function ensureOffscreenDocument() {
+  // If creation is already in progress, wait for it
+  if (offscreenDocumentCreating) {
+    await offscreenDocumentCreating;
+    return false;
   }
 
-  const canvas = new OffscreenCanvas(width, height);
-  const ctx = canvas.getContext('2d');
-
-  // Apply background color for transparent images (PNG, GIF, WebP, SVG)
-  if (needsBackground) {
-    ctx.fillStyle = settings.bgColor;
-    ctx.fillRect(0, 0, width, height);
+  // Check if document already exists
+  const contexts = await chrome.runtime.getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'] });
+  if (contexts.length > 0) {
+    return false;
   }
 
-  ctx.drawImage(bitmap, 0, 0, width, height);
-  bitmap.close();
+  // Create document with mutex to prevent race conditions
+  offscreenDocumentCreating = chrome.offscreen.createDocument({
+    url: 'offscreen.html',
+    reasons: ['BLOBS'],
+    justification: 'Canvas-based JPEG conversion fallback'
+  });
 
-  return await canvas.convertToBlob({ type: 'image/jpeg', quality: settings.quality });
+  try {
+    await offscreenDocumentCreating;
+    return true;
+  } finally {
+    offscreenDocumentCreating = null;
+  }
 }
 
 /**
@@ -176,17 +260,7 @@ async function convertWithOffscreenCanvas(blob, settings, needsBackground, mimeT
  * @returns {Promise<Blob>} JPEG image as Blob
  */
 async function convertWithOffscreenDocument(blob, settings, needsBackground) {
-  // Create offscreen document if not already present
-  const contexts = await chrome.runtime.getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'] });
-  const documentCreated = contexts.length === 0;
-  
-  if (documentCreated) {
-    await chrome.offscreen.createDocument({
-      url: 'offscreen.html',
-      reasons: ['BLOBS'],
-      justification: 'Canvas-based JPEG conversion fallback'
-    });
-  }
+  const documentCreated = await ensureOffscreenDocument();
 
   try {
     const dataUrl = await blobToDataURL(blob);
@@ -213,19 +287,28 @@ async function convertWithOffscreenDocument(blob, settings, needsBackground) {
 
 /**
  * Initiates download of the converted JPEG image.
+ * Uses Object URLs for better memory efficiency with large images.
  * @param {Blob} blob - JPEG image blob to download
  * @param {boolean} saveAs - Whether to show "Save As" dialog
  * @param {string} srcUrl - Original image URL (used for filename)
  */
 async function downloadBlob(blob, saveAs, srcUrl) {
-  const dataUrl = await blobToDataURL(blob);
+  const objectUrl = URL.createObjectURL(blob);
   const filename = getSuggestedFilename(srcUrl) || getTimestampFilename();
 
-  await chrome.downloads.download({
-    url: dataUrl,
-    filename,
-    saveAs
-  });
+  try {
+    await chrome.downloads.download({
+      url: objectUrl,
+      filename,
+      saveAs
+    });
+    // Revoke after delay to ensure download has started
+    setTimeout(() => URL.revokeObjectURL(objectUrl), OBJECT_URL_REVOKE_DELAY_MS);
+  } catch (error) {
+    // Immediately revoke on error to free memory
+    URL.revokeObjectURL(objectUrl);
+    throw error;
+  }
 }
 
 /**
