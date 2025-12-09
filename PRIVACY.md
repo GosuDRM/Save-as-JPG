@@ -49,7 +49,7 @@ https://github.com/GosuDRM/Save-as-JPG
 
 ## Changes to This Policy
 
-If we ever change this privacy policy, we will update this document and the "Last updated" date below.
+If I ever change this privacy policy, I will update this document and the "Last updated" date below.
 
 ## Contact
 
