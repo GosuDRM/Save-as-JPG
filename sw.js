@@ -13,9 +13,6 @@ const MENU_ID = 'save-image-as-jpg';
 /** @const {number} Fetch timeout in milliseconds */
 const FETCH_TIMEOUT_MS = 30000;
 
-/** @const {number} Delay before revoking object URLs (ms) */
-const OBJECT_URL_REVOKE_DELAY_MS = 60000;
-
 /** @const {Object} Default extension settings */
 const DEFAULT_SETTINGS = {
   quality: 1.0,
@@ -285,28 +282,20 @@ async function convertWithOffscreenDocument(blob, settings, needsBackground) {
 
 /**
  * Initiates download of the converted JPEG image.
- * Uses Object URLs for better memory efficiency with large images.
+ * Uses data URLs since Object URLs are not available in Service Workers.
  * @param {Blob} blob - JPEG image blob to download
  * @param {boolean} saveAs - Whether to show "Save As" dialog
  * @param {string} srcUrl - Original image URL (used for filename)
  */
 async function downloadBlob(blob, saveAs, srcUrl) {
-  const objectUrl = URL.createObjectURL(blob);
+  const dataUrl = await blobToDataURL(blob);
   const filename = getSuggestedFilename(srcUrl) || getTimestampFilename();
 
-  try {
-    await chrome.downloads.download({
-      url: objectUrl,
-      filename,
-      saveAs
-    });
-    // Revoke after delay to ensure download has started
-    setTimeout(() => URL.revokeObjectURL(objectUrl), OBJECT_URL_REVOKE_DELAY_MS);
-  } catch (error) {
-    // Immediately revoke on error to free memory
-    URL.revokeObjectURL(objectUrl);
-    throw error;
-  }
+  await chrome.downloads.download({
+    url: dataUrl,
+    filename,
+    saveAs
+  });
 }
 
 /**
