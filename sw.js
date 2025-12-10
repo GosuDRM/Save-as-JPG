@@ -48,7 +48,6 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   try {
     const settings = await getSettings();
     let imageUrl = info.srcUrl;
-    let dimensions = null;
 
     // Attempt to retrieve high-resolution URL from content script
     // Skip if tab.id is invalid (e.g., chrome://, edge://, file:// pages)
@@ -61,7 +60,6 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
         if (response?.found) {
           imageUrl = response.url;
-          dimensions = response.dimensions;
         }
       } catch (e) {
         // Content script not available (restricted page or not yet injected)

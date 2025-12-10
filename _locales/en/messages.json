@@ -14,9 +14,6 @@
    "footerPrivacy": {
       "message": "All image conversion happens 100% locally on your device — nothing is uploaded."
    },
-   "footerText": {
-      "message": "All conversions happen locally on your device. No data is uploaded."
-   },
    "menuTitle": {
       "message": "Save as JPG"
    },
@@ -25,9 +22,6 @@
    },
    "optionsTitle": {
       "message": "Save as JPG - Options"
-   },
-   "qualityHint": {
-      "message": "Range: 0.70 - 1.0 (Higher = Better quality, Larger file size)"
    },
    "qualityHintMain": {
       "message": "70% – 100% (higher = better quality, larger file)"
