@@ -27,6 +27,8 @@ The extension requires certain browser permissions to function. Here's why:
 | `downloads` | Saves converted images to your computer |
 | `storage` | Stores your preferences (quality, background color) locally |
 | `activeTab` | Accesses the image you clicked on |
+| `offscreen` | Fallback canvas conversion when OffscreenCanvas is unavailable |
+| `notifications` | Shows error messages when image conversion fails |
 | `<all_urls>` | Fetches images from any website for local conversion |
 
 ## Local Storage
@@ -57,4 +59,4 @@ If you have questions about this privacy policy, please open an issue on our Git
 
 ---
 
-**Last updated:** December 4, 2025
+**Last updated:** December 10, 2025
