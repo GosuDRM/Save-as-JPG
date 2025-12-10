@@ -49,5 +49,11 @@
    },
    "saveButton": {
       "message": "Save Settings"
+   },
+   "donationText": {
+      "message": "Enjoying this extension? Consider supporting development!"
+   },
+   "donateButton": {
+      "message": "Buy me a coffee ☕"
    }
 }

@@ -5,6 +5,7 @@
   @license MIT
 -->
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,23 +14,26 @@
   <!-- Better favicon / icon support -->
   <link rel="icon" href="icons/48.png">
 </head>
+
 <body>
   <div class="container">
     <header class="header">
       <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
-        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1" x2="12" y2="3"/>
-          <line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/>
-          <line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <circle cx="12" cy="12" r="5" />
+          <line x1="12" y1="1" x2="12" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" />
+          <line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
         </svg>
-        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
         </svg>
       </button>
       <h1 data-i18n="optionsTitle">Save as JPG – Options</h1>
@@ -46,16 +50,7 @@
           <span id="qualityValue" class="value-display">100%</span>
         </div>
 
-        <input
-          type="range"
-          id="quality"
-          name="quality"
-          min="0.7"
-          max="1.0"
-          step="0.01"
-          value="1.0"
-          class="slider"
-        >
+        <input type="range" id="quality" name="quality" min="0.7" max="1.0" step="0.01" value="1.0" class="slider">
 
         <div class="hint-group">
           <div class="hint" data-i18n="qualityHintMain">70% – 100% (higher = better quality, larger file)</div>
@@ -72,17 +67,8 @@
         </label>
 
         <div class="color-input-group">
-          <input
-            type="text"
-            id="bgColor"
-            name="bgColor"
-            value="#ffffff"
-            pattern="^#[0-9A-Fa-f]{6}$"
-            placeholder="#ffffff"
-            maxlength="7"
-            autocomplete="off"
-            spellcheck="false"
-          >
+          <input type="text" id="bgColor" name="bgColor" value="#ffffff" pattern="^#[0-9A-Fa-f]{6}$"
+            placeholder="#ffffff" maxlength="7" autocomplete="off" spellcheck="false">
           <input type="color" id="bgColorPicker" value="#ffffff">
         </div>
 
@@ -120,8 +106,24 @@
     <footer class="footer">
       <p class="privacy-note">
         <span class="lock-icon">🔒</span>
-        <span data-i18n="footerPrivacy">All image conversion happens 100% locally on your device — nothing is uploaded.</span>
+        <span data-i18n="footerPrivacy">All image conversion happens 100% locally on your device — nothing is
+          uploaded.</span>
       </p>
+
+      <!-- Donation Section -->
+      <div class="donation-section">
+        <p class="donation-text" data-i18n="donationText">Enjoying this extension? Consider supporting development!</p>
+        <a href="https://www.paypal.com/paypalme/GosuDRM" target="_blank" rel="noopener" class="donate-btn">
+          <svg class="paypal-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path
+              d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.72a.77.77 0 0 1 .757-.64h6.507c2.259 0 3.923.734 4.904 2.098.484.672.777 1.418.871 2.222.095.818.009 1.762-.267 2.817-.934 3.546-3.168 4.943-6.3 4.943H9.122a.77.77 0 0 0-.757.64l-.815 4.894a.641.641 0 0 1-.633.643h-.841z" />
+            <path
+              d="M19.95 8.56c-.005.034-.01.068-.017.102-.867 3.482-3.059 5.068-6.378 5.068h-1.614a.77.77 0 0 0-.757.64l-1.038 6.576a.534.534 0 0 0 .526.617h3.666a.77.77 0 0 0 .757-.64l.312-1.977.586-3.714a.77.77 0 0 1 .757-.64h.476c3.091 0 5.513-1.256 6.221-4.89.303-1.555.146-2.854-.614-3.766a3.26 3.26 0 0 0-.883-.776c.02.133.034.267.034.4 0 .333-.034.67-.034 1z" />
+          </svg>
+          <span data-i18n="donateButton">Buy me a coffee ☕</span>
+        </a>
+      </div>
+
       <p class="author">
         Made with ❤️ by <a href="https://github.com/GosuDRM" target="_blank" rel="noopener">GosuDRM</a>
         • <a href="https://github.com/GosuDRM/Save-as-JPG" target="_blank" rel="noopener">GitHub</a>
@@ -131,4 +133,5 @@
 
   <script src="options.js"></script>
 </body>
+
 </html>
