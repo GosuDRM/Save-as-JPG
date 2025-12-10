@@ -96,16 +96,26 @@ Access settings via:
 
 ```
 Save-as-JPG/
-├── manifest.json       # Extension configuration
-├── sw.js               # Service worker (background)
-├── content.js          # Content script (image detection)
-├── offscreen.html/js   # Fallback canvas conversion
-├── options.html/js     # Settings page
+├── manifest.json        # Extension configuration (Manifest V3)
+├── sw.js                # Service worker (background processing)
+├── content.js           # Content script (high-res image detection)
+├── offscreen.html       # Offscreen document container
+├── offscreen.js         # Fallback canvas conversion
+├── options.html         # Settings page UI
+├── options.js           # Settings page controller
 ├── styles/
-│   └── options.css     # Options page styles
-├── icons/              # Extension icons
-└── _locales/           # Internationalization
-    └── en/messages.json
+│   └── options.css      # Options page styles (light/dark themes)
+├── icons/
+│   ├── 16.png           # Toolbar icon
+│   ├── 48.png           # Extension management icon
+│   └── 128.png          # Chrome Web Store icon
+├── _locales/
+│   └── en/
+│       └── messages.json  # English translations
+├── LICENSE              # MIT License
+├── CHANGELOG.md         # Version history
+├── PRIVACY.md           # Privacy policy
+└── README.md            # Documentation
 ```
 
 ## 🤝 Contributing
