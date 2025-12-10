@@ -120,13 +120,23 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📝 Changelog
 
-### v2.0.0
+See [CHANGELOG.md](CHANGELOG.md) for a detailed version history.
+
+### Recent Updates
+
+**v2.0.1** (2025-12-10)
+- Fixed memory leaks in ImageBitmap and image element cleanup
+- Fixed race condition in offscreen document creation
+- Added error notifications for failed conversions
+- Improved memory efficiency with Object URLs
+- Added fetch timeout protection
+
+**v2.0.0** (2025-12-09)
 - Complete rewrite with Manifest V3
 - New modern options page with dark mode
 - Improved srcset and lazy-load detection
 - SVG upscaling for small icons
 - Better filename preservation
-- Memory leak fixes and performance improvements
 
 ## 📄 License
 
