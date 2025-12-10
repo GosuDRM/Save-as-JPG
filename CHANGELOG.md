@@ -10,16 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Memory leak**: ImageBitmap now always closed via `try/finally` in OffscreenCanvas conversion
 - **Race condition**: Added mutex to prevent duplicate offscreen document creation during concurrent conversions
-- **Memory efficiency**: Replaced data URLs with Object URLs for downloads, reducing memory pressure on large images
+- **Service Worker compatibility**: Fixed `URL.createObjectURL` error (not available in Service Workers)
 - **Canvas context**: Added null checks after `getContext('2d')` to prevent silent failures
 - **Image cleanup**: Proper cleanup of image elements in offscreen document to help garbage collection
 - **Fetch timeout**: Added 30-second timeout to prevent hanging on slow/unresponsive image requests
 
 ### Added
 - **Error notifications**: Users now see notification popups when image conversion fails
+- **PayPal donation link**: Added support link in options page footer
 - **3-digit hex color support**: Color input now accepts shorthand `#RGB` format in addition to `#RRGGBB`
-- **Missing i18n keys**: Added `optionsSubtitle`, `qualityHintMain`, `qualityRecommendation`, `footerPrivacy`
+- **Missing i18n keys**: Added `optionsSubtitle`, `qualityHintMain`, `qualityRecommendation`, `footerPrivacy`, `donationText`, `donateButton`
 - **`.gitattributes`**: Added for consistent line ending normalization across platforms
+- **`LICENSE`**: Added MIT license file
+- **`CHANGELOG.md`**: Added version history documentation
 
 ### Changed
 - Added `notifications` permission to manifest for error feedback
